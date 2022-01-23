@@ -40,8 +40,8 @@ split_index = round(0.7 * size(data, 2));
 data_train = data(:, 1:split_index);
 labels_train = labels(:, 1:split_index);
 
-data_test = data(:, split_index:end);
-labels_test = labels(:, split_index:end);
+data_test = data(:, split_index + 1:end);
+labels_test = labels(:, split_index + 1:end);
 
 
 figure

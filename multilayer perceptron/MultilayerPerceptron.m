@@ -16,12 +16,12 @@ classdef MultilayerPerceptron < handle
     end
     
     methods
-        function obj = MultilayerPerceptron(layer_sizes, activations, d_activations, sigma_weights, dEdy, lambda, clip_flg, clip_norm, clip_val)
+        function obj = MultilayerPerceptron(layer_sizes, activations, d_activations, init_options, dEdy, lambda, clip_flg, clip_norm, clip_val)
             obj.layer_sizes = layer_sizes;
             obj.activations = activations;
             obj.d_activations = d_activations;
 
-            obj.W = obj.init_weights(sigma_weights);
+            obj.W = obj.init_weights(init_options);
             
             obj.dEdy = dEdy;
 
@@ -36,8 +36,8 @@ classdef MultilayerPerceptron < handle
 
         end
         
-        function W = init_weights(obj, sigma_weights)
-            W = init_weights(obj.layer_sizes, sigma_weights);
+        function W = init_weights(obj, init_options)
+            W = init_weights(obj.layer_sizes, obj.activations, init_options);
         end
         
         function out = forward_pass(obj, x)
