@@ -74,9 +74,9 @@ legend('class A', 'class B')
 X = data_train_norm;
 %% Network parameters
 
-learning_rate = 0.00003;
-lambda = 0.0001;
-epochs = 2000;
+learning_rate = 0.001;
+lambda = 0.00001;
+epochs = 1000;
 batch_size = 64;
 
 % gradient clipping
@@ -90,15 +90,17 @@ init_options.distribution = "gauss";
 
 %% Network
 
+% Still having problems with NaNs and exploding gradient
+
 % layer def
-layer_sizes = [size(X, 1); 20; 50; 20; size(labels, 1)];
+layer_sizes = [size(X, 1); 10; 20; 10; size(labels, 1)];
 
 % activation functions and their derivatives by layer
-% activations = {@magic_tanh; @magic_tanh; @magic_tanh; @sigmoid};
-% d_activations = {@d_magic_tanh; @d_magic_tanh; @d_magic_tanh; @d_sigmoid};
+activations = {@magic_tanh; @magic_tanh; @magic_tanh; @sigmoid};
+d_activations = {@d_magic_tanh; @d_magic_tanh; @d_magic_tanh; @d_sigmoid};
 
-activations = {@relu; @relu; @relu; @sigmoid};
-d_activations = {@d_relu; @d_relu; @d_relu; @d_sigmoid};
+% activations = {@relu; @relu; @relu; @sigmoid};
+% d_activations = {@d_relu; @d_relu; @d_relu; @d_sigmoid};
 
 % error derivative
 dEdy = @d_binary_cross_entrpoy;
@@ -108,7 +110,7 @@ model = MultilayerPerceptron(layer_sizes, activations, d_activations, init_optio
 %% Training
 loss_array = zeros(epochs, 1);
 for i = 1:epochs
-    loss = model.train(X, labels_train, batch_size, learning_rate, @binary_cross_entropy);
+    loss = model.train(X, labels_train, batch_size, learning_rate, @binary_cross_entropy) / N;
     
     if mod(i, 10) == 0
         fprintf("Epoch = %d Error = %2.5f\n", i, loss)
