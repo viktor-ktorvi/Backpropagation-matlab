@@ -8,7 +8,7 @@ set(groot, 'defaultLegendInterpreter', 'latex');
 %% Generating data
 rng(26); % init random seed
 
-N = 1000;
+N = 500;
 t = rand(1, N);
 a = 1;
 b = 10;
@@ -106,17 +106,19 @@ d_activations = {@d_magic_tanh; @d_magic_tanh; @d_magic_tanh; @d_sigmoid};
 dEdy = @d_binary_cross_entrpoy;
 
 model = MultilayerPerceptron(layer_sizes, activations, d_activations, init_options, dEdy, lambda, clip_flg, clip_norm, clip_val);
-
+% model.to_gpu();
 %% Training
 loss_array = zeros(epochs, 1);
+tic
 for i = 1:epochs
-    loss = model.train(X, labels_train, batch_size, learning_rate, @binary_cross_entropy) / N;
+    loss = model.train(X, labels_train, batch_size, learning_rate, @binary_cross_entropy, 0) / N;
     
-    if mod(i, 10) == 0
+    if mod(i, 50) == 0
         fprintf("Epoch = %d Error = %2.5f\n", i, loss)
     end
     loss_array(i) = loss;
 end
+toc
 
 figure
 plot(loss_array)
